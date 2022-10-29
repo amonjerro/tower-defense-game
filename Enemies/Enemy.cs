@@ -8,20 +8,15 @@ public class Enemy : MonoBehaviour {
     public int currentHitpoints;
     public float moveSpeed;
     public int ArmorValue;
-    public GameObject bulletObject;
-    public float FireRate;
 
     private Pathfinder pathfinder;
     private CoordinateVector nextDestination;
     private int currentPathIndex;
     private Dictionary<GameObject, bool> turretDict;
-    private Queue<GameObject> targetQueue;
-    private GameObject activeTarget;
 
     void Start() {
 
         this.turretDict = new Dictionary<GameObject, bool>();
-        this.targetQueue = new Queue<GameObject>();
         this.pathfinder = Pathfinder.GetInstance();
         this.currentHitpoints = this.maxHitpoints;
         this.currentPathIndex = 0;
@@ -44,12 +39,6 @@ public class Enemy : MonoBehaviour {
 
     void Update(){
         this.Move();
-        if(this.activeTarget == null && this.targetQueue.Count > 0){
-            GameObject possibleTarget = this.targetQueue.Dequeue();
-            if (turretDict[possibleTarget]){
-                this.activeTarget = possibleTarget;
-            }
-        }
     }
 
     public void Move(){
@@ -59,7 +48,7 @@ public class Enemy : MonoBehaviour {
         }
         Vector3 destination = this.nextDestination.ToVector3(true);
         Vector3 targetDirection = (destination - transform.position).normalized;
-        transform.position = Vector3.MoveTowards(transform.position,  destination, this.moveSpeed * Time.deltaTime);
+        gameObject.SendMessageUpwards("SetPosition", Vector3.MoveTowards(transform.position,  destination, this.moveSpeed * Time.deltaTime));
 
         Rotate(targetDirection);
 
@@ -96,7 +85,7 @@ public class Enemy : MonoBehaviour {
                 kvp.Key.SendMessage("ReleaseTarget");
             }
         }
-        Destroy(gameObject);
+        gameObject.SendMessageUpwards("FadeAway");
     }
 
     private void TimeToDie(){
@@ -105,11 +94,7 @@ public class Enemy : MonoBehaviour {
                 kvp.Key.SendMessage("DeactivateTarget", gameObject);
             }
         }
-        Destroy(gameObject);
-    }
-
-    public void Shoot(){
-        ; //TODO
+        gameObject.SendMessageUpwards("TimeToDie");
     }
 
     private void OnTriggerEnter2D(Collider2D other) {

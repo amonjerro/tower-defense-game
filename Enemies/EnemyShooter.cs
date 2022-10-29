@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tower : MonoBehaviour
+public class EnemyShooter : MonoBehaviour
 {
+    // Start is called before the first frame update
+
     public int sightRadius;
     public GameObject bullet;
 
@@ -13,9 +15,10 @@ public class Tower : MonoBehaviour
     private bool isReloading;
     public float reloadTime;
     private float currentTimer;
-    int targetLayer;
+
 
     private GameObject activeTarget;
+    int targetLayer;
 
     private Queue<GameObject> targetQueue;
     private Dictionary<GameObject, bool> targetDictionary;
@@ -30,7 +33,7 @@ public class Tower : MonoBehaviour
 
         this.targetQueue = new Queue<GameObject>();
         this.targetDictionary = new Dictionary<GameObject, bool>();
-        this.targetLayer = LayerMask.NameToLayer("TankBodies");
+        this.targetLayer = LayerMask.NameToLayer("TowerBodies");
         this.isReloading = false;
         this.currentTimer = 0f;
         this.currentLoad = this.ammoPerReload;
@@ -103,14 +106,16 @@ public class Tower : MonoBehaviour
     }
 
     private void Shoot(){
+        
         GameObject bullet = Instantiate(this.bullet, transform.position, Quaternion.identity);
         bullet.layer = this.targetLayer;
+
         bullet.SendMessage("SetDestination", this.activeTarget.transform.position);
-        bullet.SendMessage("SetFriendly", true);
+        bullet.SendMessage("SetFriendly", false);
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.tag == "Enemy"){
+        if (other.gameObject.tag == "Tower"){
             this.targetQueue.Enqueue(other.gameObject);
             this.targetDictionary[other.gameObject] = true;
         }
@@ -127,5 +132,4 @@ public class Tower : MonoBehaviour
     public void ReleaseTarget(){
         this.activeTarget = null;
     }
-
 }
