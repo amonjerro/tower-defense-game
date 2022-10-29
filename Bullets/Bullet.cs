@@ -30,7 +30,6 @@ public class Bullet : MonoBehaviour
     }
     
     void SetDestination(Vector3 whereAreWeGoing){
-        Debug.Log("Destination set");
         this.destination = whereAreWeGoing;
     }
 

@@ -99,7 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sightRadius: 2
   bullet: {fileID: 944384512113146154, guid: 134ee6ad327b7934095cbbd2499dcc87, type: 3}
-  shotCooldown: 1
+  shotCooldown: 0.5
   ammoPerReload: 3
   reloadTime: 4
   max_hp: 10

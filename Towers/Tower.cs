@@ -14,8 +14,8 @@ public class Tower : MonoBehaviour
     public float reloadTime;
     private float currentTimer;
 
-    public int max_hp;
-    private int current_hp;
+    public int maxHp;
+    private int currentHp;
 
 
     private GameObject activeTarget;
@@ -35,12 +35,14 @@ public class Tower : MonoBehaviour
         this.targetDictionary = new Dictionary<GameObject, bool>();
         this.isReloading = false;
         this.currentTimer = 0f;
-        this.current_hp = this.max_hp;
+        this.currentHp = this.maxHp;
+        this.currentLoad = this.ammoPerReload;
     }
 
     // Update is called once per frame
     void Update()
     {
+        this.currentTimer += Time.deltaTime;
         if (this.activeTarget != null && this.targetDictionary[this.activeTarget] == false){
             this.ReleaseTarget();
         }
@@ -51,7 +53,7 @@ public class Tower : MonoBehaviour
 
             //TODO calculate lead angle
 
-            //Shoot at the dude?
+            //Shoot at the dude
             this.ShotCycle();
         } else {
             if (this.targetQueue.Count > 0){
@@ -74,8 +76,6 @@ public class Tower : MonoBehaviour
     }
 
     private void ShotCycle(){
-        this.currentTimer += Time.deltaTime;
-
         // Reload
         if(this.isReloading){
             // Are we still realoading?
@@ -101,8 +101,8 @@ public class Tower : MonoBehaviour
 
         if (this.currentLoad <= 0){
             this.isReloading = true;
-            this.currentTimer = 0;
         }
+        this.currentTimer = 0;
     }
 
     private void Shoot(){
@@ -130,13 +130,9 @@ public class Tower : MonoBehaviour
         this.activeTarget = null;
     }
 
-    private void OnTriggerExit2D(Collider2D other) {
-        this.ReleaseTarget();
-    }
-
     private void TakeDamage(int damage){
-        this.current_hp -= damage;
-        if (this.current_hp <= 0){
+        this.currentHp -= damage;
+        if (this.currentHp <= 0){
             // Expand on this
             Destroy(gameObject);
         }
