@@ -72,7 +72,7 @@ public class EnemyShooter : MonoBehaviour
         float this_y = transform.position.y;
         float that_y = this.activeTarget.transform.position.y;
         float angle = Mathf.Atan2(this_y - that_y, this_x - that_x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0,0,angle+90);
+        transform.rotation = Quaternion.Euler(0,0,angle);
     }
 
     private void ShotCycle(){
