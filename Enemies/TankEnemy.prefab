@@ -236,8 +236,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ffc3471dfab91e4d97aac7751de35a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHitpoints: 0
-  currentHitpoints: 2
+  maxHitpoints: 2
+  currentHitpoints: 0
   moveSpeed: 1
   ArmorValue: 0
 --- !u!50 &3748971420682492770

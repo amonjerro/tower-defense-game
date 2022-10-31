@@ -134,6 +134,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: MapParentObject
       objectReference: {fileID: 0}
+    - target: {fileID: 5044465628752487558, guid: e98e74cda8fc03f4a9853cf16ec3968e, type: 3}
+      propertyPath: width
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044465628752487558, guid: e98e74cda8fc03f4a9853cf16ec3968e, type: 3}
+      propertyPath: height
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 7397698721134855777, guid: e98e74cda8fc03f4a9853cf16ec3968e, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -312,7 +320,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9ca9811771b1949962a0848a17d182, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movespeed: 10
+  moveSpeed: 10
+  scrollRate: 3
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -340,7 +349,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5.0754294
+  orthographic size: 2
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

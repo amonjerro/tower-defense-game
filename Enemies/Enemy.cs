@@ -88,7 +88,7 @@ public class Enemy : MonoBehaviour {
         gameObject.SendMessageUpwards("FadeAway");
     }
 
-    private void TimeToDie(){
+    private void ResolveDeath(){
         foreach(KeyValuePair<GameObject, bool> kvp in this.turretDict ){
             if (kvp.Value){
                 kvp.Key.SendMessage("DeactivateTarget", gameObject);
@@ -113,7 +113,7 @@ public class Enemy : MonoBehaviour {
         this.currentHitpoints -= damage;
         if (this.currentHitpoints <= 0){
             // Expand on this
-            this.TimeToDie();
+            this.ResolveDeath();
         }
     }
 }
