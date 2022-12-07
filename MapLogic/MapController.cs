@@ -11,6 +11,8 @@ public class MapController : MonoBehaviour
     public int width;
     public float mesh_size;
 
+    public Canvas canvas;
+
     public GameObject EnemySpawner;
 
     private Pathfinder pathfinder = Pathfinder.GetInstance();
@@ -79,6 +81,9 @@ public class MapController : MonoBehaviour
     }
 
     void Start(){
+        //Canvas Stuff
+        
+
         float nudgeSize = this.mesh_size/2;
         this.mapgen = new MapGenerator(this.width, this.height);
         CoordinateVector starting_position = this.mapgen.CreateEntranceAndExit();

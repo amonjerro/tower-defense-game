@@ -9,10 +9,13 @@ public class Enemy : MonoBehaviour {
     public float moveSpeed;
     public int ArmorValue;
 
+
     private Pathfinder pathfinder;
     private CoordinateVector nextDestination;
     private int currentPathIndex;
     private Dictionary<GameObject, bool> turretDict;
+
+    public QuadHealthBar healthBar;
 
     void Start() {
 
@@ -111,6 +114,7 @@ public class Enemy : MonoBehaviour {
 
     private void TakeDamage(int damage){
         this.currentHitpoints -= damage;
+        healthBar.SetHealth(MathUtils.NormalizeIntToFloat(0, this.maxHitpoints, this.currentHitpoints));
         if (this.currentHitpoints <= 0){
             // Expand on this
             this.ResolveDeath();

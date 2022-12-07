@@ -7,6 +7,7 @@ public class TowerTarget : MonoBehaviour
     
     public int maxHp;
     private int currentHp;
+    public QuadHealthBar healthBar;
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +23,7 @@ public class TowerTarget : MonoBehaviour
 
     private void TakeDamage(int damage){
         this.currentHp -= damage;
+        healthBar.SetHealth(MathUtils.NormalizeIntToFloat(0, this.maxHp, this.currentHp));
         if (this.currentHp <= 0){
             // Expand on this
             SendMessageUpwards("TimeToDie");
