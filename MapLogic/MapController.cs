@@ -19,6 +19,8 @@ public class MapController : MonoBehaviour
 
     private Mesh MakeQuadMesh(int x, int y, TileType map_value){
         Mesh mesh = new Mesh();
+        const float UV_SCALE_FACTOR = 0.25f;
+
 
         Vector3[] vertices = new Vector3[4]{
             new Vector3(x*this.mesh_size,y*this.mesh_size,0),
@@ -41,23 +43,32 @@ public class MapController : MonoBehaviour
             -Vector3.forward,
         };
         mesh.normals = normals;
+
         
         if (map_value == TileType.Wall){
+            int bitMask = this.mapgen.GetBitMask(y,x);
+
+            int column = bitMask % 4;
+            int row = bitMask/4;
+
+            float scaled_column = column * UV_SCALE_FACTOR;
+            float scaled_row = row * UV_SCALE_FACTOR;
+
             Vector2[] uv = new Vector2[4]
             {
-                new Vector2(0, 0),
-                new Vector2(0.5f, 0),
-                new Vector2(0, 1),
-                new Vector2(0.5f, 1)
+                new Vector2(scaled_column, scaled_row),
+                new Vector2(scaled_column+UV_SCALE_FACTOR, scaled_row),
+                new Vector2(scaled_column, scaled_row+UV_SCALE_FACTOR),
+                new Vector2(scaled_column+UV_SCALE_FACTOR, scaled_row+UV_SCALE_FACTOR)
             };
             mesh.uv = uv;
         } else {
             Vector2[] uv = new Vector2[4]
             {
-                new Vector2(0.5f, 0),
-                new Vector2(1, 0),
-                new Vector2(0.5f, 1),
-                new Vector2(1, 1)
+                new Vector2(0, 0),
+                new Vector2(0.001f, 0),
+                new Vector2(0, 0.001f),
+                new Vector2(0.001f, 0.001f)
             };
             mesh.uv = uv;
         }

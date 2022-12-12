@@ -1,6 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+
+[Flags]
+public enum Directions {
+    North = 1 << 0,
+    East = 1 << 2,
+    South = 1 << 3,
+    West = 1 << 1,
+}
+
 
 public class MapGenerator
 {
@@ -44,14 +55,14 @@ public class MapGenerator
     }
 
     public CoordinateVector CreateEntranceAndExit(){
-        float location = Random.Range(0.0f, 1.0f);
+        float location = UnityEngine.Random.Range(0.0f, 1.0f);
         int first_corridor_x = 0;
         int first_corridor_y = 0;
         
         bool is_bottom = location < 0.25;
         if (is_bottom){
             this.starting_y = this.rows-1;
-            this.starting_x = Random.Range(1, this.columns-2);
+            this.starting_x = UnityEngine.Random.Range(1, this.columns-2);
 
             bool start_even = this.starting_x % 2 == 0;
 
@@ -59,11 +70,11 @@ public class MapGenerator
             first_corridor_y = this.starting_y - 1;
 
             this.ending_y = 0;
-            this.ending_x = Random.Range(1, this.columns-2);
+            this.ending_x = UnityEngine.Random.Range(1, this.columns-2);
 
             bool end_even = this.ending_x % 2 == 0;
             while(end_even != start_even || this.ending_x == this.starting_x){
-                this.ending_x = Random.Range(1, this.columns-2);
+                this.ending_x = UnityEngine.Random.Range(1, this.columns-2);
                 end_even = this.ending_x % 2 == 0;
             }
         }
@@ -71,7 +82,7 @@ public class MapGenerator
 
         bool is_left = location >= 0.25 && location < 0.5;
         if (is_left){
-            this.starting_y = Random.Range(1, this.rows-2);
+            this.starting_y = UnityEngine.Random.Range(1, this.rows-2);
             this.starting_x = 0;
 
             bool start_even = this.starting_y % 2 == 0;
@@ -80,12 +91,12 @@ public class MapGenerator
             first_corridor_y = this.starting_y;
 
 
-            this.ending_y = Random.Range(1, this.rows-2);
+            this.ending_y = UnityEngine.Random.Range(1, this.rows-2);
             this.ending_x = this.columns - 1;
 
             bool end_even = this.ending_y % 2 == 0;
             while(end_even != start_even || this.ending_y == this.starting_y){
-                this.ending_y = Random.Range(1, this.rows-2);
+                this.ending_y = UnityEngine.Random.Range(1, this.rows-2);
                 end_even = this.ending_y % 2 == 0;
             }
         }
@@ -93,7 +104,7 @@ public class MapGenerator
         bool is_right = location >= 0.5 && location < 0.75;
         if (is_right){
             this.starting_x = this.columns-1;
-            this.starting_y = Random.Range(1, this.rows-2);
+            this.starting_y = UnityEngine.Random.Range(1, this.rows-2);
 
             bool start_even = this.starting_y % 2 == 0;
 
@@ -101,17 +112,17 @@ public class MapGenerator
             first_corridor_y = this.starting_y;
 
             this.ending_x = 0;
-            this.ending_y = Random.Range(1, this.rows-2);
+            this.ending_y = UnityEngine.Random.Range(1, this.rows-2);
 
             bool end_even = this.ending_y % 2 == 0;
             while(end_even != start_even || this.ending_y == this.starting_y){
-                this.ending_y = Random.Range(1, this.rows-2);
+                this.ending_y = UnityEngine.Random.Range(1, this.rows-2);
                 end_even = this.ending_y % 2 == 0;
             }
         }
 
         if (!is_right && !is_left && !is_bottom){
-            this.starting_x = Random.Range(1, this.columns-2);
+            this.starting_x = UnityEngine.Random.Range(1, this.columns-2);
             this.starting_y = 0;
             
             bool start_even = this.starting_x % 2 == 0;
@@ -119,12 +130,12 @@ public class MapGenerator
             first_corridor_x = this.starting_x;
             first_corridor_y = 1;
 
-            this.ending_x = Random.Range(1, this.columns-2);
+            this.ending_x = UnityEngine.Random.Range(1, this.columns-2);
             this.ending_y = this.rows - 1;
 
             bool end_even = this.ending_x % 2 == 0;
             while(end_even != start_even || this.ending_x == this.starting_x){
-                this.ending_x = Random.Range(1, this.columns-2);
+                this.ending_x = UnityEngine.Random.Range(1, this.columns-2);
                 end_even = this.ending_x % 2 == 0;
             }
         }
@@ -221,6 +232,16 @@ public class MapGenerator
         returnable = horizon[0];
         horizon.RemoveAt(0);
         return returnable;
+    }
+
+    public int GetBitMask(int y, int x){
+        bool north = y == rows - 1 || (this.map[y+1][x] == TileType.Wall);
+        bool east = x == columns - 1 || (this.map[y][x+1] == TileType.Wall);
+        bool south = y == 0 || (this.map[y-1][x] == TileType.Wall);
+        bool west = x == 0 || (this.map[y][x-1] == TileType.Wall);
+
+        var bitMask = (north ? Directions.North : 0) | (east ? Directions.East : 0) | (south ? Directions.South : 0) | (west ? Directions.West : 0); 
+        return (int) bitMask;
     }
 
     public void ConstructMap(CoordinateVector start){
