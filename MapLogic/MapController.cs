@@ -10,12 +10,10 @@ public class MapController : MonoBehaviour
     public int height;
     public int width;
     public float mesh_size;
-
-    public Canvas canvas;
+    public int entrances = 1;
 
     public GameObject EnemySpawner;
-
-    private Pathfinder pathfinder = Pathfinder.GetInstance();
+    public GameObject EndLocation;
 
     private Mesh MakeQuadMesh(int x, int y, TileType map_value){
         Mesh mesh = new Mesh();
@@ -97,20 +95,26 @@ public class MapController : MonoBehaviour
 
         float nudgeSize = this.mesh_size/2;
         this.mapgen = new MapGenerator(this.width, this.height);
-        CoordinateVector starting_position = this.mapgen.CreateEntranceAndExit();
-
-        this.mapgen.ConstructMap(starting_position);
+        this.mapgen.ConstructMap(this.entrances);
         this.MakeMapMesh();
 
         Vector3 spawnNudge = new Vector3(nudgeSize, nudgeSize, 0);
-        this.pathfinder.FindPath(this.mapgen);
+        
+        for (int i = 0; i < this.entrances; i++){
+            CoordinateVector entrance_coordinate = this.mapgen.GetEntrance(i);
+            Vector3 spawnPosition = new Vector3(entrance_coordinate.X*this.mesh_size, entrance_coordinate.Y*this.mesh_size, 0);        
+            GameObject spawner_go = Instantiate(
+                EnemySpawner, 
+                spawnPosition + transform.position + spawnNudge,
+                Quaternion.identity);
+            EnemySpawner spawner = spawner_go.GetComponent<EnemySpawner>();
+            spawner.SetupPathfinder(this.mapgen, i);
+        }
 
-        Vector3 spawnPosition = new Vector3(this.mapgen.starting_x*this.mesh_size, this.mapgen.starting_y*this.mesh_size, 0);        
-
-        Instantiate(
-            EnemySpawner, 
-            spawnPosition + transform.position + spawnNudge,
-            Quaternion.identity);
+        CoordinateVector exit_coordinate = this.mapgen.GetEndingPosition();
+        Vector3 exitPosition = new Vector3(exit_coordinate.X*this.mesh_size, exit_coordinate.Y*this.mesh_size, 0);
+        Instantiate(EndLocation, exitPosition + transform.position + spawnNudge, Quaternion.identity);
+        
 
         BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
     }

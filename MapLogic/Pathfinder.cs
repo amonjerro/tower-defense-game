@@ -6,31 +6,18 @@ using UnityEngine;
 public class Pathfinder
 {
 
-    private static Pathfinder _instance = null;
     private bool path_created = false;
+    private int _entrance;
 
-    private Pathfinder(){}
-
-    private static readonly object _lock = new object();
-
-
-    //Make Singleton
-    public static Pathfinder GetInstance(){
-        if (_instance == null){
-            lock(_lock){
-                if (_instance == null){
-                    _instance = new Pathfinder();
-                    _instance.path = new List<CoordinateVector>();
-                }
-            }
-        }
-        return _instance;
+    public Pathfinder(int entrance){
+        this.path = new List<CoordinateVector>();
+        this._entrance = entrance;
     }
 
     private List<CoordinateVector> path;
 
     public int PathSize(){
-        return _instance.path.Count;
+        return path.Count;
     }
 
     private int Heuristic(CoordinateVector x, CoordinateVector end){
@@ -41,28 +28,28 @@ public class Pathfinder
     }
 
     private void ReconstructPath(Dictionary<string, CoordinateVector> cameFrom, CoordinateVector current){
-        _instance.path.Add(current);
+       path.Add(current);
         while(cameFrom.ContainsKey(current.ToString())){
             current = cameFrom[current.ToString()];
-            _instance.path.Add(current);
+           path.Add(current);
         }
-        _instance.path.Reverse();
-        _instance.path_created = true;
+       path.Reverse();
+       path_created = true;
     }
 
     public bool IsPathCreated(){
-        return _instance.path_created;
+        return path_created;
     }
 
     public CoordinateVector GetNext(int current){
-        if (current+1 >= _instance.path.Count){
+        if (current+1 >=path.Count){
             return null;
         }
-        return _instance.path[current+1];
+        return path[current+1];
     }
 
     public bool FindPath(MapGenerator map){
-        CoordinateVector start = map.GetStartingPosition();
+        CoordinateVector start = map.GetEntrance(this._entrance);
         CoordinateVector end = map.GetEndingPosition();
 
         int tentative_gScore;
@@ -82,7 +69,7 @@ public class Pathfinder
             current = pQueue.PopRoot();
 
             if (current == end){
-                _instance.ReconstructPath(cameFrom, current);
+               ReconstructPath(cameFrom, current);
                 return true;
             }
 

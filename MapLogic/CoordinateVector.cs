@@ -19,6 +19,14 @@ public class CoordinateVector
         return Math.Abs(this.X - other.X) + Math.Abs(this.Y - other.Y);
     }
 
+    public int Distance_X(CoordinateVector other){
+        return Math.Abs(this.X - other.X);
+    }
+
+    public int Distance_Y(CoordinateVector other){
+        return Math.Abs(this.Y - other.Y);
+    }
+
     public Vector3 ToVector3(bool nudge){
         if (nudge){
             return new Vector3(this.X + nudgeAmount, this.Y + nudgeAmount, 0);

@@ -11,9 +11,10 @@ public class EnemySpawner : MonoBehaviour
     public GameObject DefaultTankPrefab;
     public GameObject DoubleCannonTank;
 
-    private Pathfinder pathfinder = Pathfinder.GetInstance();
+    private Pathfinder pathfinder;
 
     public Queue<EnemyTypes> enemies;
+
 
     // Start is called before the first frame update
     void Start()
@@ -26,6 +27,11 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    public void SetupPathfinder(MapGenerator map, int entrance){
+        this.pathfinder = new Pathfinder(entrance);
+        this.pathfinder.FindPath(map);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -36,10 +42,17 @@ public class EnemySpawner : MonoBehaviour
     }
 
     private void SpawnEnemy(EnemyTypes type){
+        GameObject go;
         if (type == EnemyTypes.Tank){
-            GameObject go = Instantiate(DefaultTankPrefab, transform.position, transform.rotation);
+            go = Instantiate(DefaultTankPrefab, transform.position, transform.rotation);
+            go = go.transform.GetChild(1).gameObject;
+            Enemy enemy = go.GetComponent<Enemy>();
+            enemy.SetPathfinder(this.pathfinder);
         } else if(type == EnemyTypes.DualCannonTank){
-            GameObject go = Instantiate(DoubleCannonTank, transform.position, transform.rotation);
+            go = Instantiate(DoubleCannonTank, transform.position, transform.rotation);
+            go = go.transform.GetChild(1).gameObject;
+            Enemy enemy = go.GetComponent<Enemy>();
+            enemy.SetPathfinder(this.pathfinder);
         }
     }
 

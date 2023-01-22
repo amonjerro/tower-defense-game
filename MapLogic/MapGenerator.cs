@@ -19,8 +19,8 @@ public class MapGenerator
     public readonly int rows;
     public readonly int columns;
 
-    public int starting_x;
-    public int starting_y;
+    public List<CoordinateVector> entrances;
+    public List<CoordinateVector> starting_corridors;
 
     public int ending_x;
     public int ending_y;
@@ -34,6 +34,8 @@ public class MapGenerator
         this.map = new TileType[this.rows][];
         this.columns = x;
         this.DeadEnds = new List<CoordinateVector>();
+        this.entrances = new List<CoordinateVector>();
+        this.starting_corridors = new List<CoordinateVector>();
         for(int i = 0; i < y; i++){
             this.map[i] = new TileType[this.columns];
             for(int k = 0; k < x; k++){
@@ -46,104 +48,93 @@ public class MapGenerator
         this.map[y][x] = new_value;
     }
 
-    public CoordinateVector GetStartingPosition(){
-        return new CoordinateVector(starting_x, starting_y);
+    public CoordinateVector GetEntrance(int index){
+        return this.entrances[index];
     }
 
     public CoordinateVector GetEndingPosition(){
-        return new CoordinateVector(ending_x, ending_y);
+        return new CoordinateVector(this.ending_x, this.ending_y);
     }
 
-    public CoordinateVector CreateEntranceAndExit(){
-        float location = UnityEngine.Random.Range(0.0f, 1.0f);
-        int first_corridor_x = 0;
-        int first_corridor_y = 0;
+    public void CreateEntrance(){
+        int y_wall, x_wall;
+        int starting_corridor_x, starting_corridor_y;
+        starting_corridor_x = starting_corridor_y = 0;
+
+        bool y_fixed;
+        int a = MathUtils.RandomOddIntFromRange(1,(this.columns-2)/2);
+        int b = MathUtils.RandomOddIntFromRange(1,((this.rows -2)/2));
         
-        bool is_bottom = location < 0.25;
-        if (is_bottom){
-            this.starting_y = this.rows-1;
-            this.starting_x = UnityEngine.Random.Range(1, this.columns-2);
+        //Pick a random wall point
+        x_wall = UnityEngine.Random.Range(0.0f,1.0f) > 0.5f ? 0 : 1;
+        y_wall = UnityEngine.Random.Range(0.0f,1.0f) > 0.5f ? 0 : 1;
+        y_fixed = UnityEngine.Random.Range(0.0f, 1.0f) > 0.5f;
 
-            bool start_even = this.starting_x % 2 == 0;
-
-            first_corridor_x = this.starting_x;
-            first_corridor_y = this.starting_y - 1;
-
-            this.ending_y = 0;
-            this.ending_x = UnityEngine.Random.Range(1, this.columns-2);
-
-            bool end_even = this.ending_x % 2 == 0;
-            while(end_even != start_even || this.ending_x == this.starting_x){
-                this.ending_x = UnityEngine.Random.Range(1, this.columns-2);
-                end_even = this.ending_x % 2 == 0;
-            }
-        }
-
-
-        bool is_left = location >= 0.25 && location < 0.5;
-        if (is_left){
-            this.starting_y = UnityEngine.Random.Range(1, this.rows-2);
-            this.starting_x = 0;
-
-            bool start_even = this.starting_y % 2 == 0;
-
-            first_corridor_x = 1;
-            first_corridor_y = this.starting_y;
-
-
-            this.ending_y = UnityEngine.Random.Range(1, this.rows-2);
-            this.ending_x = this.columns - 1;
-
-            bool end_even = this.ending_y % 2 == 0;
-            while(end_even != start_even || this.ending_y == this.starting_y){
-                this.ending_y = UnityEngine.Random.Range(1, this.rows-2);
-                end_even = this.ending_y % 2 == 0;
-            }
-        }
-
-        bool is_right = location >= 0.5 && location < 0.75;
-        if (is_right){
-            this.starting_x = this.columns-1;
-            this.starting_y = UnityEngine.Random.Range(1, this.rows-2);
-
-            bool start_even = this.starting_y % 2 == 0;
-
-            first_corridor_x = this.starting_x-1;
-            first_corridor_y = this.starting_y;
-
-            this.ending_x = 0;
-            this.ending_y = UnityEngine.Random.Range(1, this.rows-2);
-
-            bool end_even = this.ending_y % 2 == 0;
-            while(end_even != start_even || this.ending_y == this.starting_y){
-                this.ending_y = UnityEngine.Random.Range(1, this.rows-2);
-                end_even = this.ending_y % 2 == 0;
-            }
-        }
-
-        if (!is_right && !is_left && !is_bottom){
-            this.starting_x = UnityEngine.Random.Range(1, this.columns-2);
-            this.starting_y = 0;
+        if (y_fixed){
+            starting_corridor_y = ((this.rows-3)*y_wall)+1;
+            x_wall = x_wall * (this.columns-1-2*a) + a;
+            y_wall = y_wall * (this.rows-1);
+            starting_corridor_x = x_wall;
             
-            bool start_even = this.starting_x % 2 == 0;
-
-            first_corridor_x = this.starting_x;
-            first_corridor_y = 1;
-
-            this.ending_x = UnityEngine.Random.Range(1, this.columns-2);
-            this.ending_y = this.rows - 1;
-
-            bool end_even = this.ending_x % 2 == 0;
-            while(end_even != start_even || this.ending_x == this.starting_x){
-                this.ending_x = UnityEngine.Random.Range(1, this.columns-2);
-                end_even = this.ending_x % 2 == 0;
-            }
+        } else {
+            starting_corridor_x = ((this.columns-3)*x_wall)+1;
+            y_wall = y_wall * (this.rows-1-2*b) + b;
+            x_wall = x_wall * (this.columns-1);
+            starting_corridor_y = y_wall;
         }
 
-        this.UpdateCoordinateValue(this.starting_x, this.starting_y, TileType.Floor);
-        this.UpdateCoordinateValue(this.ending_x, this.ending_y, TileType.Floor);
+        this.entrances.Add(new CoordinateVector(x_wall, y_wall));
+        this.starting_corridors.Add(new CoordinateVector(starting_corridor_x, starting_corridor_y));
+        this.UpdateCoordinateValue(starting_corridor_x, starting_corridor_y, TileType.Floor);
+        this.UpdateCoordinateValue(x_wall, y_wall, TileType.Floor);
 
-        return new CoordinateVector(first_corridor_x, first_corridor_y);
+    }
+
+    private void CreateExit(){
+
+        //Establish a minimum distance
+        int min_distance = 2;
+        int max_retries = 10;
+        int retries = 0;
+        int a = MathUtils.RandomOddIntFromRange(1,(this.columns-2)/2);
+        int b = MathUtils.RandomOddIntFromRange(1,((this.rows -2)/2));
+        bool is_okay = false;
+        int x_wall = 0;
+        int y_wall = 0;
+        bool y_fixed = false;
+
+        //Randomly probe the walls until you find a proper exit
+        while(!is_okay){
+            ControlUtils.WhileControl(retries, max_retries, "Exceeded retries creating exit");
+            //Pick a random wall point
+            x_wall = UnityEngine.Random.Range(0.0f,1.0f) > 0.5f ? 0 : 1;
+            y_wall = UnityEngine.Random.Range(0.0f,1.0f) > 0.5f ? 0 : 1;
+            y_fixed = UnityEngine.Random.Range(0.0f, 1.0f) > 0.5f;
+
+            if (y_fixed){
+                x_wall = (x_wall * (this.columns-1-2*a)) + a;
+                y_wall = (y_wall * (this.rows-1));
+            } else {
+                y_wall = (y_wall * (this.rows-1-2*b)) + b;
+                x_wall = x_wall * (this.columns-1);
+            }
+            
+            CoordinateVector possible_exit = new CoordinateVector(x_wall, y_wall);
+
+            is_okay = true;
+            for (int i = 0; i < this.entrances.Count; i++){
+                if (possible_exit.Distance_X(this.entrances[i]) <= min_distance && possible_exit.Distance_Y(this.entrances[i]) <= min_distance){
+                    is_okay = false;
+                    break;
+                }
+            }
+            retries++;
+        }
+
+        this.ending_x = x_wall;
+        this.ending_y = y_wall;
+
+        this.UpdateCoordinateValue(this.ending_x, this.ending_y, TileType.Floor);
     }
 
     public bool IsWall(int x, int y){
@@ -152,6 +143,10 @@ public class MapGenerator
 
     public bool IsEnd(int x, int y){
         return x == this.ending_x && y == this.ending_y;
+    }
+
+    private bool IsTileType(int x, int y, TileType value){
+        return this.map[y][x] == value;
     }
 
     private void ExpandHorizon(CoordinateVector location, int min_x, int max_x, int min_y, int max_y, List<CoordinateVector> horizon){
@@ -195,6 +190,33 @@ public class MapGenerator
             this.DeadEnds.Add(location);
         }
     }
+
+    private CoordinateVector TestNeighbors(CoordinateVector location, int min_x, int max_x, int min_y, int max_y, TileType testValue){
+        int loc_x = location.X;
+        int loc_y = location.Y;
+        // Check north
+        if (loc_y-2 >= min_y && this.IsTileType(loc_x, loc_y-2, testValue)){
+            return new CoordinateVector(loc_x, loc_y-1);
+        }
+
+        // Check East
+        if (loc_x -2 >= min_x && this.IsTileType(loc_x-2, loc_y, testValue)){
+            return new CoordinateVector(loc_x-1, loc_y);
+        }
+
+        //Check West
+        if (loc_x + 2 <= max_x && this.IsTileType(loc_x+2, loc_y, testValue)){
+            return new CoordinateVector(loc_x+1, loc_y);
+        }
+
+        //Check South
+        if (loc_y + 2 <= max_y && this.IsTileType(loc_x, loc_y+2, testValue)){
+            return new CoordinateVector(loc_x, loc_y+1);
+        }
+
+        return new CoordinateVector(-1, -1);
+
+    } 
 
     public List<CoordinateVector> GetNeighbors(CoordinateVector location, int distance){
         List<CoordinateVector> neighbors = new List<CoordinateVector>();
@@ -244,14 +266,18 @@ public class MapGenerator
         return (int) bitMask;
     }
 
-    public void ConstructMap(CoordinateVector start){
+    public void ConstructMap(int entrances){
         int max_x = this.columns - 2;
         int max_y = this.rows - 2;
         int min_x, min_y;
         min_x = min_y = 1;
 
-        CoordinateVector current = start;
+        for (int i = 0; i < entrances; i++){
+            CreateEntrance();
+        }
+        CreateExit();
 
+        CoordinateVector current = this.starting_corridors[0];
         List<CoordinateVector> horizon = new List<CoordinateVector>();
 
         this.ExpandHorizon(current, min_x, max_x, min_y, max_y, horizon);
@@ -259,12 +285,33 @@ public class MapGenerator
         while (horizon.Count > 0){
             current = this.PluckFromHorizon(horizon);
 
-
             if (this.IsEnd(current.X, current.Y)){
                 continue;
             }
             
             this.ExpandHorizon(current, min_x, max_x, min_y, max_y, horizon);
+        }
+        
+        for (int i = 1; i < this.entrances.Count; i++){
+            int retries = 0;
+            horizon.Clear();
+            current = this.starting_corridors[i];
+            CoordinateVector v = this.TestNeighbors(current, min_x, max_x, min_y, max_y, TileType.Floor);
+            if (v.X == -1){
+                this.ExpandHorizon(current, min_x, max_x, min_y, max_y, horizon);
+                while (horizon.Count > 0){
+                    ControlUtils.WhileControl(retries, 3, "Exceeded retries on digging new entrance");
+                    current = this.PluckFromHorizon(horizon);
+                    v = this.TestNeighbors(current, min_x, max_x, min_y, max_y, TileType.Floor);
+                    if (v.X != -1){
+                        break;
+                    }
+                    this.ExpandHorizon(current, min_x, max_x, min_y, max_y, horizon);
+                    retries++;
+                }
+            }
+            
+            UpdateCoordinateValue(v.X, v.Y, TileType.Floor);
         }
 
         horizon.Clear();

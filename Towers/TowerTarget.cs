@@ -29,4 +29,10 @@ public class TowerTarget : MonoBehaviour
             SendMessageUpwards("TimeToDie");
         }
     }
+    
+    private void OnTriggerExit2D(Collider2D other){
+        if(other.gameObject.tag == "Enemy"){
+            other.gameObject.SendMessage("ReleaseTarget");
+        }
+    }
 }

@@ -9,6 +9,10 @@ public class Enemy : MonoBehaviour {
     public float moveSpeed;
     public int ArmorValue;
 
+    public bool isSetUp;
+
+    private EnemySpawner spawner;
+
 
     private Pathfinder pathfinder;
     private CoordinateVector nextDestination;
@@ -18,12 +22,23 @@ public class Enemy : MonoBehaviour {
     public QuadHealthBar healthBar;
 
     void Start() {
-
         this.turretDict = new Dictionary<GameObject, bool>();
-        this.pathfinder = Pathfinder.GetInstance();
         this.currentHitpoints = this.maxHitpoints;
         this.currentPathIndex = 0;
+        this.isSetUp = false;
+    }
 
+    void Update(){
+        if (!this.isSetUp){
+            if (pathfinder is null){
+                return;
+            }
+            TrySetUp();
+        }
+        this.Move();
+    }
+
+    private void TrySetUp(){
         this.nextDestination = this.pathfinder.GetNext(this.currentPathIndex);
         this.currentPathIndex++;
 
@@ -37,13 +52,13 @@ public class Enemy : MonoBehaviour {
         } else if (destination.y < -0.5f){
             transform.rotation = Quaternion.Euler(0,0,90.0f);
         }
-
+        isSetUp = true;
     }
 
-    void Update(){
-        this.Move();
+    public void SetPathfinder(Pathfinder pathfinder){
+        this.pathfinder = pathfinder;
     }
-
+    
     public void Move(){
         if (this.nextDestination is null){
             DestinationReached();

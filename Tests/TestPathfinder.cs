@@ -9,7 +9,7 @@ public class TestPathfinder : MonoBehaviour
 
     void Start() {
 
-        this.pathfinder = Pathfinder.GetInstance();
+        this.pathfinder = new Pathfinder(0);
 
         if (pathfinder.IsPathCreated()){
             if(!TestUtils.AssertGreaterThan(pathfinder.PathSize(), 0)) throw new TestUtilsException("No Path Found");

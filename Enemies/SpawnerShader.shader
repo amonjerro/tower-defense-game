@@ -3,6 +3,7 @@ Shader "Unlit/SpawnerShader"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _Color ("Color", Color) = (1,0,0,1)
     }
     SubShader
     {
@@ -21,6 +22,7 @@ Shader "Unlit/SpawnerShader"
             #pragma vertex vert
             #pragma fragment frag
             // make fog work
+            float4 _Color;
 
             #include "UnityCG.cginc"
             #define TAU 6.28318530718
@@ -54,7 +56,8 @@ Shader "Unlit/SpawnerShader"
                 float radialDistance = length(mask);
                 float wave = cos( (radialDistance - _Time.y * 0.3 ) * TAU * 2 )*0.5+0.5;
                 wave *= 1-radialDistance;
-                return float4(1*wave,0,0,1*wave);
+                float4 maskedColor = _Color * wave;
+                return maskedColor;
             }
             ENDCG
         }

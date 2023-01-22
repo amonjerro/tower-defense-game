@@ -136,11 +136,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5044465628752487558, guid: e98e74cda8fc03f4a9853cf16ec3968e, type: 3}
       propertyPath: width
-      value: 10
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 5044465628752487558, guid: e98e74cda8fc03f4a9853cf16ec3968e, type: 3}
       propertyPath: height
-      value: 10
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044465628752487558, guid: e98e74cda8fc03f4a9853cf16ec3968e, type: 3}
+      propertyPath: entrances
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7397698721134855777, guid: e98e74cda8fc03f4a9853cf16ec3968e, type: 3}
       propertyPath: m_RootOrder
@@ -351,7 +355,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 2
+  orthographic size: 3.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

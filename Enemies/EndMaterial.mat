@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SpawnerMaterial
+  m_Name: EndMaterial
   m_Shader: {fileID: 4800000, guid: 1baeb04c1de768441870a55bf13b6b89, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -73,6 +73,6 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.7169812, g: 0.01690993, b: 0.06795435, a: 1}
+    - _Color: {r: 0.108134575, g: 0.48006442, b: 0.8490566, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
