@@ -62,7 +62,7 @@ public class Tower : MonoBehaviour
         }
     }
 
-    private void Rotate(){    
+    private void Rotate(){
         //Syntactic sugar
         float this_x = transform.position.x;
         float that_x = this.activeTarget.transform.position.x;

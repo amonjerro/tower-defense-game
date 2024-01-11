@@ -45,12 +45,10 @@ public class EnemySpawner : MonoBehaviour
         GameObject go;
         if (type == EnemyTypes.Tank){
             go = Instantiate(DefaultTankPrefab, transform.position, transform.rotation);
-            go = go.transform.GetChild(1).gameObject;
             Enemy enemy = go.GetComponent<Enemy>();
             enemy.SetPathfinder(this.pathfinder);
         } else if(type == EnemyTypes.DualCannonTank){
             go = Instantiate(DoubleCannonTank, transform.position, transform.rotation);
-            go = go.transform.GetChild(1).gameObject;
             Enemy enemy = go.GetComponent<Enemy>();
             enemy.SetPathfinder(this.pathfinder);
         }

@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour {
     public bool isSetUp;
 
     private EnemySpawner spawner;
-
+    public GameObject Body;
 
     private Pathfinder pathfinder;
     private CoordinateVector nextDestination;
@@ -44,13 +44,13 @@ public class Enemy : MonoBehaviour {
 
         Vector3 destination = (this.nextDestination.ToVector3(true) - transform.position).normalized;
         if (destination.x > 0.5f){
-            transform.rotation = Quaternion.Euler(0,0, 180.0f);
+            Body.transform.rotation = Quaternion.Euler(0,0, 180.0f);
         } else if (destination.y > 0.5f){
-            transform.rotation = Quaternion.Euler(0,0, 270.0f);
+            Body.transform.rotation = Quaternion.Euler(0,0, 270.0f);
         } else if (destination.x < -0.5f){
-            transform.rotation = Quaternion.Euler(0,0,0);
+            Body.transform.rotation = Quaternion.Euler(0,0,0);
         } else if (destination.y < -0.5f){
-            transform.rotation = Quaternion.Euler(0,0,90.0f);
+            Body.transform.rotation = Quaternion.Euler(0,0,90.0f);
         }
         isSetUp = true;
     }
@@ -66,7 +66,7 @@ public class Enemy : MonoBehaviour {
         }
         Vector3 destination = this.nextDestination.ToVector3(true);
         Vector3 targetDirection = (destination - transform.position).normalized;
-        gameObject.SendMessageUpwards("SetPosition", Vector3.MoveTowards(transform.position,  destination, this.moveSpeed * Time.deltaTime));
+        gameObject.transform.position = Vector3.MoveTowards(transform.position,  destination, this.moveSpeed * Time.deltaTime);
 
         Rotate(targetDirection);
 
@@ -79,21 +79,21 @@ public class Enemy : MonoBehaviour {
     private void Rotate(Vector3 destination){
         if (destination.x > 0.5f){
             Quaternion target = Quaternion.Euler(0,0, 180.0f);
-            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * this.moveSpeed * 3);
+            Body.transform.rotation = Quaternion.Slerp(Body.transform.rotation, target, Time.deltaTime * this.moveSpeed * 3);
             return;
         }
         if (destination.y > 0.5f){
             Quaternion target = Quaternion.Euler(0,0, 270.0f);
-            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * this.moveSpeed * 3);
+            Body.transform.rotation = Quaternion.Slerp(Body.transform.rotation, target, Time.deltaTime * this.moveSpeed * 3);
             return;
         }
         if (destination.x < -0.5f){
             Quaternion target = Quaternion.Euler(0,0,0);
-            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * this.moveSpeed * 3);
+            Body.transform.rotation = Quaternion.Slerp(Body.transform.rotation, target, Time.deltaTime * this.moveSpeed * 3);
         }
         if (destination.y < -0.5f){
             Quaternion target = Quaternion.Euler(0,0,90.0f);
-            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * this.moveSpeed * 3);
+            Body.transform.rotation = Quaternion.Slerp(Body.transform.rotation, target, Time.deltaTime * this.moveSpeed * 3);
         }
     }
 

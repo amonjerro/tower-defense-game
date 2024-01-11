@@ -24,7 +24,7 @@ public class Bullet : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        //transform.position = transform.forward * this.moveSpeed * Time.deltaTime;
+
         Vector3 targetDirection = (this.destination - transform.position).normalized;
         transform.position = Vector3.MoveTowards(transform.position, this.destination, this.moveSpeed * Time.deltaTime);
     }
